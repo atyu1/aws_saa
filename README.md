@@ -12,7 +12,43 @@
  - AWS Edge - is a CDN (Cache) in more cities located, to lower latency
  - Some services are region scoped and some are global (IAM)
 
-## IAM
- 
+## IAM - Identity and Access Management
+ - Global service
+ - All user accounts are created here (including root)
+ - Users should be created for every user and grouped to specific groups
+ - Groups only contain users
+ - User can exist without group
+ - User can be part of multiple groups
 
-AWS preparation notes and scripts
+ - After we assign permissions
+ - Permission with policies
+ - Policies are JSON based docs, describing what services and what there they can do
+ - Apply least privilege policy (minimal access as possible) 
+
+ - You can change account alias (right top in IAM User menu) - this can be used during login
+ - user format after login is: <username>@<account alias>
+ - Policy format:
+
+```
+{
+ "Version": <data>,
+ "Id": <ID>,
+ "Statement": [
+ {
+    "Sid": <sub ID>,
+    "Effect": <allow/deny>,
+    "Principal" : {
+      "AWS": ["arm:aws:iam::123434:root"]
+      },
+    "Action": [
+      "s3:GetObject",
+      "s3:PutObject"
+    ],
+    "Resource": ["arn:aws:s3:::mybucket/*"]
+    }
+  ]
+}
+```
+
+ -  
+
