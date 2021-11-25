@@ -12,6 +12,11 @@
  - AWS Edge - is a CDN (Cache) in more cities located, to lower latency
  - Some services are region scoped and some are global (IAM)
 
+ - Options to communicate with AWS
+  - GUI - AWS Management Console
+  - AWS CLI - for CLI - protected by Access Key (Token based auth)
+  - AWS SDK - for coding 
+
 ## IAM - Identity and Access Management
  - Global service
  - All user accounts are created here (including root)
@@ -50,5 +55,17 @@
 }
 ```
 
- -  
+ - Strong Password can be forced by Password Policy
+ - Password policy also add option to change passowrd after time, if user can change it or not
+ - MFA - MultiFactor Auth - protect users with MFA device
+ - Virtual MFA device - Google Authenticator, Authy, Duo, ...
+ - HW MFA device - USB security key - e.g. YubiKey (by Yubico) 
+ - HW Key FOB MFA Device - like pager
+ - Or goverment level MFA device
 
+ - AWS CLI example:
+```
+ aws s3 cp file.txt s3://mybucket/file.txt
+```
+
+ - 
