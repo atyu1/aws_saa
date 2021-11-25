@@ -78,4 +78,28 @@
  <ommited>
 ```
 
- - 
+### IAM Security tools
+ - IAM Credentials Report 
+   - reports list of accounts and status of credentials
+   - its a download excel type of thing
+   - password last used, changed, number of access keys, password enabled
+
+ - IAM Access Advisor
+   - Checking least priviledge permsission and advise to remove some if users are not using them
+   - showing which service was access when, and if something was not used, you can remove the permission
+
+### AWS Cloud shell
+ - Terminal via GUI to apply aws CLI in browser mode
+ - Top right icon in main screen of console with terminal icon
+ - Not every region supports that
+ 
+
+### IAM Roles
+ - Temprorarly permisions assigne to some resources (like EC2)
+ - In case that EC2 needs to perform some operation in AWS (like needs to have role to create more EC2)
+ - Commonly used with EC2 roles, lambda roles, CloudFormation
+ - Roles can be attached/detached on the fly to allow temporarly enhance the permissions
+
+
+
+ 
