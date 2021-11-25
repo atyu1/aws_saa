@@ -65,7 +65,17 @@
 
  - AWS CLI example:
 ```
- aws s3 cp file.txt s3://mybucket/file.txt
+ # aws configure
+ AWS Access Key ID [None]: <enter here>
+ AWS Secret Access Key [None]: <enter here>
+ Default region name [None]: <region>
+ Default output format [None]: <skipable>
+
+ # aws iam list-users
+ <ommited>
+
+ # aws s3 cp file.txt s3://mybucket/file.txt
+ <ommited>
 ```
 
  - 
