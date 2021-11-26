@@ -103,3 +103,28 @@
 
 
 ## EC2 - Elastic Cloud Computing 
+ - Infrastructure as a Service
+ - Virtual Machines
+ - We choose:
+   - OS - linux, windows...
+   - CPUs, RAM
+   - Storage
+   - Networking
+   - Security Groups (FW)
+   - Bootstrap script (user data)
+
+ - Bootstraping is done by EC2 User data
+ - We use for install software, download thing during boot
+ - More User Date === longer boot time
+ - It is very common to terminate instances
+ - After Stop -> Start , public IPv4 is changing
+ - Stopped instances are not charged
+
+### EC2 Instance Types
+ - m5.3xlarge - m=instance class, 5=generation, 2xlarge=size(CPU,memory)
+
+ - Different types:
+   - General Purpose - Compute, Memory and networking balance
+   - Compute Optimized - CPU optimized, Used for: Media coding, High Performance Computing, Batch processing, Machine Learning, Gaming server, ...
+   - Memory Optimized - Fast memory workload, Used for: BigData, InMemory DB, Distributed Cache, Application performin in memory
+   - Storage Optimized - Storage intensive tasks, high IO, Used for: Relational DB, cache,....
