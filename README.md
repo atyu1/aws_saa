@@ -176,7 +176,40 @@
     - diversified = distributed accorss all pools - better availability and used for longer wokrloads
     - capacityOptimized - from pool get the best capacity instances for max savings
 
+### Placement Groups
+  - Strategy to plant instances 
+  - Stratiegies:
+    - `Cluster` - Single AZ and same Rack - Low latency, low HA
+    - `Spread` - Critical Apps, Spread accross HW, max 7 per AZ, can spread to multpiple AZ, maximize HA
+    - `Partition` - spread instances accross different partitions (racks) within AZ, up to 100 instancces per group, partitions can be part of same or diff AZ
 
+### Elastic Network Interfaces ENI
+  - Represent a NIC card (vNIC)
+  - It can be detached and attached and ensure to keep the IP address, security groups or macs
+  - AZ limited
+  - Its created by default for instances, but its not permanent
+  - Fr permanent, create separately
 
+### EC2 Hibernate
+  - Save the memory state to disk and stop the instance
+  - When you start, it resume and you continue
+  - Its written to root EBS volume 
+  - the root EBS must be encrypted
+  - can be kept for max 60 days (can change)
 
+### EC2 Nitro
+  - Next gen EC2
+  - New virtualization technology
+  - Faster networking
+  - Higher EBS speed IOPS, non Nitro 32000 / Nitro 64000
+  - Better securty
+  - Latest instances have Nitro
 
+### EC2 vCPU
+  - 1x vCPU = 1 Thread on 1 Core
+  - Reservation for full core is possible
+  - Tune number of cores and threads during creation 
+
+### EC2 capacity reservation
+  - Reserve for custom perios (non 1year)
+  - Number of AZ
