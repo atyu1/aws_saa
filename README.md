@@ -213,3 +213,77 @@
 ### EC2 capacity reservation
   - Reserve for custom perios (non 1year)
   - Number of AZ
+
+## Elastic Block Device EBS
+  - Network drive attached to EC2
+  - Allow to keep data even after termination
+  - Single attach, in some special types, Multi Attach is supported
+  - Limited to AZ
+  - When creating volumes, ensure that it is in same AZ
+
+#### EBS Snapshot 
+  - Save staete and data from point in time
+  - Used for backups
+  - Volume is not needed to be detached
+  - Copy snapshots between AZ
+  - We can create new volumes from EBS -> this is how we can move volumes between AZ
+
+### Amazon Machine Image
+  - Same as qcow2 
+  - special customized image for Ec2
+  - Region scoped
+  - There publicly available or create custom or by in Marketplace
+  - You can create it from EC2
+  - Right Click -> Images and Templates -> Create image
+  - Creating AMI makes faster booting then using User Data
+
+### EC2 Instance Store
+  - Higher performance the Network Drives
+  - Better I/O
+  - It is default instance storage
+  - Not feasible for long term storage
+
+### EBS Volume Types
+  - GP2/GP3 - SSD - General Purpose - balance price and performance - 1-16TB 
+    - GP2 - IOPS up to 3000 - max 16000 (based on size) - 3IOPs per GB
+    - GP3 - Base IOPS 3000 - Up to 16000 - better throughput 1000 MiB/s - independently set IOPS (not in GP2)
+  - IO1/IO2 - SSD - Highest Performance - mission critical or high-throughput workloads
+    - Critical business apps
+    - 4-16TiB
+    - Default max IOPS 32000
+    - Max IOPS for EC2 Nitro = 64000
+    - Define IOPS independently from storage size
+    - io2 better latency (sub milisecond)
+  - st1 - HDD - Low cost HDD - frequently access, low throughput
+    - Big Data
+  - sc1 - HDD - Lowest cost - less frequently access 
+
+### EBS Multi-Attach
+  - Same volume attached to multiple EC2
+  - Full read/write to disk
+  - IO1/IO2 can be used only
+  - Application must manage concurent writes 
+  - Filesystem must support clustering (not xfs)
+
+### EBS Encryption
+  - Must be enabled explicitly
+  - Data at rest is encrupt
+  - All data moving over network is encrypted
+  - All snapshots encrypted
+  - All volumes created from snapshot encrypted
+  - Minimal impact on latency
+  - Using AES-256 
+
+  - Encrypt unencrypted EBS volume
+  - Create uncencrypted snapshot -> copy the snapshot and encrypt -> create new volume encrypted
+
+## Elastic File System - EFS
+  - Amazon create NFSv4.1 - Not in exam
+  - Managed NFS (managed by AWS)
+  - Mountable to multiple to EC2
+  - 3x more expensive as GP2
+  - Highly available and scalable
+  - pay for usage only
+  - encryptable by KMS
+  - mountable by 100 EC2 instances accross AZ
+  - Good for web sharring 
