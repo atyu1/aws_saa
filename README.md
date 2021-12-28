@@ -412,4 +412,70 @@
   - You can add Pending:Wait state - where you can manual install softw. and after proceed furhter - manualy
   - Same for teminate:pending
 
-  
+## Databases (RDS/Aurora/ElasticCache)
+
+### Relational Database Service RDS
+  - Managed SQL query language
+  - Similair to mysql
+  - Managed by AWS
+  - Can create DBs in multiple kind:
+    - Postgres
+    - Mysql
+    - Mariadb
+    - Oracle
+    - Microsoft SQL
+    - Aurora
+
+  - Automated proivsioning
+  - Continous backups 
+    - automated and enabled by default 
+    - full DB backup daily
+    - transaction logs are backed up every 5 min
+    - Restoration points every 5 min
+    - up to 7 days back kept
+    - db snapshots = manual backups (retain for a longer time)
+  - Monitoring dashboard
+  - Read replicas  
+    - improves performance
+    - Possible to create within AZ, cross AZ, cross Region
+    - using ASYNC replication from main RW DB
+    - Good for read intensive tasks (reports, analytics) and not impact production DB
+    - no payment for cross AZ replication traffic
+    - replication fee is there for cross region replication
+    - `Can be used from Multi AZ Disaster Recovery`
+  - Multi AZ setup
+    - Different from Read Replicas is that its SYNC replication and RW
+    - Can use the same DNS name so failover of main DB can happen fast
+    - It can be just a standby (no active RW traffic can be there, unless failover)
+    - From single AZ to multi AZ is no downtime required  - 1 click modify
+    - It is created through snapshot and after SYNCing the data
+  - Maintanance windows for upgrades
+  - Scaling capability
+    - Autoscaling - detects and automatically increase the storage if required
+    - Supports Max size
+    - Scale out if storage is at 90% for 5 min - and 6h hours after last change
+    - Good for unpredicatble storage requirements
+
+### RDS Security
+  - Encryption at rest by AWS KMS = AES 256
+  - Encrypt master and read replicas
+  - Master must be encrypted to have Read Replicas encrypted
+  - Transparent Data Encryption supported for Oracle and SQL 
+
+  - Encryption at move is doen by SSL
+  - Provides SSL options to configure certificates
+  - We have to force SSL inside SQL - like Mysql: Grant usage on *.* TO 'user'@'%' REQUIRE SSL;
+
+  - Snapshots are unencrypted if RDS is unencrypted
+  - Can be copied and copy can be encrypted
+  - This can be used to encrypt DB 
+  - Restore from new copy which is encrypted a new DB and delete the old one
+
+  - Recommended to deploy in private segment
+  - Leverage security groups (from which EC2 we can access)
+
+  - Access Management is used to limit configuration for specific users
+  - IAM based login can be used for RDS Mysql and PosgreSQL
+  - EC2 can have IAM role -> used to Get Auth Token -> Use token to login to DB 
+
+## Aurora
