@@ -479,3 +479,99 @@
   - EC2 can have IAM role -> used to Get Auth Token -> Use token to login to DB 
 
 ## Aurora
+  - Closed source - AWS propertiary DB
+  - Postgres and Mysql drivers are compatible with Aurora
+  - Cloud optimized
+  - 5x faster then Mysql on RDS and 3x as postgres
+  - It has Autosclaing storage from 10GB -> 128TB
+  - It have 15 replicas
+  - Failover is instant
+  - It costs 20% more then mysql
+
+### Aurora HA
+  - 6 copies of data across 3 AZ
+    - 4 copies for writes - 3 for reads
+  - Automatic replication
+  - Data is located on 100s of volumes to avoid single point of failure
+  - There is one write endpoint (1 point to contact DB, it can failover)
+  - Reader endpoint are there and more of them, used to do queries
+  - Automatic failover, backup/recovery, industry compliance , ...
+
+### Aurora Security
+  - RDS security is the same as Aurora sec
+
+### Aurora Auto Scaling
+  - Multiple replicas - 1 writer , rest are readers
+  - If reader will have too many connections or high CPU, it can scale and add more readers
+
+### Aurora Custom Endpoints
+  - Create custom endpoints which points to specific DB
+  - It will be preffered over the reader 
+  - Used for more powerfull reports generation where we target faster instances
+
+### Aurora Serverless
+  - Automated Scaling based on actual usage
+  - Good if workload is hard to predict
+  - No capacity planning needed
+  - More costly, payong per second
+
+### Aurora MultiMaster
+  - Supports immediate failover between replicas
+  - Every node does Read and Write
+
+### Global Aurroa
+  - Multi Regoins support
+  - We can have multi region replicas - disaster recovery
+  - Or Global database 
+    - 1 primary ragion RW
+    - 5 secondary R0 - lag is 1s
+    - max 16 Read replicas per secondary region
+    - Failover and promote another region is < 1 min
+
+### Aurora ML
+  - Integration to Machine learning
+  - Supported DB for various machine learnings
+  - Simple,Optimizied and secure integaration to AWS ML services
+  - Supported ML:
+    - Amazon SageMaker
+    - Amazon Comprehend
+  
+
+## Amazon ElastiCache
+  - Managed as RDS
+  - AWS Managed Redis or Memcached
+  - in memory DB with high performace and low latency
+  - Makes applications stateless
+  - No IAM authentication suppoeted
+  - IAM Policies are used only for AWS API level security
+
+  - Application first check if data exists in cache
+    - if yes, its cache hit - retrieve the data
+    - if not, cache miss -  it gets the data from DB and cache will save it 
+    
+  - Cache should have data invalidate timer
+  - Multi User sessions in distributed app require a central cache
+  - The app in one EC2 writes data to ElastiCache
+  - Another app can read from Cache and reuse it
+
+  - `Redis`
+    - Multi AZ with Auto Failover
+    - Read Replicas 
+    - Data durability
+    - Backup and Restore 
+    - more like in memory DB
+    - Support password/token auth (extra security on top of security groups)
+    - Support SSL
+  
+  - `Memcached`
+    - Multinonde paritioning
+    - No HA
+    - Non persistent
+    - No backu and restore
+    - Multi-threaded
+    - Support SASL based auth
+  
+  - Cache load possibilites:
+    1. Lazy loading - All data is cached, cache data can became stale
+    2. Write through - Add or Update data when written to the DB (no stale data)
+    3. Session store - store temporay session data with Timer feature
