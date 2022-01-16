@@ -575,3 +575,41 @@
     1. Lazy loading - All data is cached, cache data can became stale
     2. Write through - Add or Update data when written to the DB (no stale data)
     3. Session store - store temporay session data with Timer feature
+
+## Route 53 (Amazon DNS service)
+  - HA, scalable and AWS Managed DNS service
+  - Authorative DNS = CU can update the records
+  - Its also a Domain Registrar
+  - It can do health probes
+  - 100% availability in AWS
+  - Records:
+    - Domain/Subdomain - example.com
+    - Record Type - A, AAAA
+    - Value - some value 
+    - Routing Policy - how to route the responds
+    - TTL - amount of time until the record can be cached
+  - Host Zones:
+    - Public = DNS queries are translated from remote clients (end users)
+    - Private = Avaialable inside VPC
+
+  - CNAME - use as alias, only worsk for A or AAAA FQDN
+  - Alias - use as alias, works with root domain
+          - free of charge
+  
+### Routing Policies in Route 53
+  - Define how to respond to DNS queries
+  - `Simple`
+    - Route traffic to single resource
+    - One DNS record can have 1 or more values
+    - Client choose a random one from list
+    - AWS Alias can be used for resources
+    - No health checks
+  - `Weighted`
+    - Add a value in %
+    - Weight define how much traffic will be used for that record
+    - Can be used with health checks
+    - Can be used to test new app 
+  - `Latency`
+    - Redirect to lowest latency close to us
+    - Latency is calculated between user and AWS Regions
+  
