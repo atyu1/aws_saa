@@ -580,6 +580,7 @@
   - HA, scalable and AWS Managed DNS service
   - Authorative DNS = CU can update the records
   - Its also a Domain Registrar
+  - Supports buying domain in 3rd party and after Amazon will manage it
   - It can do health probes
   - 100% availability in AWS
   - Records:
@@ -612,4 +613,40 @@
   - `Latency`
     - Redirect to lowest latency close to us
     - Latency is calculated between user and AWS Regions
-  
+
+### Health Checks Router53
+  - Available only for public resources
+  - Monitoring endpoints = App, Server, EC2, other resouce
+  - Monitor other healthchecks
+  - Around 15 global health checkers
+  - 3 failures = unhealhty, every 30s
+  - Higher frequency = higher cost
+  - If 18% health checkers reports it is healthy = it is healthy
+  - Passing if status code is 2XX or 3XX
+  - Health check can be also based on text file = first 5120 bytes
+  - Security groups/Firewall must allow access from healthcheckers
+  - `Calculated Healthchecks` - combine multiple regular healthchecks, can use 'OR','AND' or 'NOT'
+  - Private subnets can be monitored through cloudwatch metrics, first monitor private segment via cloudwatch ...
+  - Add alarm to cloudwatch and then healthcheck can monitor the alarm
+
+### Geolocation
+  - Routing policy
+  - Specify A receords based on locations
+  - Example if someone is from EU they will get record A from Frankfurt EC2 IP address
+
+### Geoproximity
+  - Routing policy
+  - Based on geo location
+  - Specify Bias (1,99 = more traffic / -1,-99 = less traffic)
+  - Bias is prefference value
+  - if one location has higher bias, then it will get more traffic
+  - Traffic policy is UI which via GUI helps to create complex rules
+  - GUI is great for geoproximity as it have a map and shows who will connect where
+
+### MultiValue
+  - Used to send traffic to multiple IPs for same A record
+  - Can be associated with HealhChecks
+  - Up to 8 healthy records
+  - Not replacement for ELB
+  - Create multiple records with the same A record but different IP
+  - Better then regular mutltivalue as it does not support healthchecks
