@@ -650,3 +650,30 @@
   - Not replacement for ELB
   - Create multiple records with the same A record but different IP
   - Better then regular mutltivalue as it does not support healthchecks
+
+
+## Amazon S3 - Simple Storage Service
+  - Infinite scalling storage
+  - Very popular
+  - Using objects and buckets
+  - Objects are data and have key
+  - The key is the full path to data, example: s3://my-bucket/folder/folder2/file.txt
+  - Buckets are main folders for data and can contain sub folders
+  - Buckets are regional scoped
+  - It must be unique name (for full amazon)
+  - Max size is 5TB for 1 object
+  - Uploading bigger files are multi-part upload
+  - Metadata - like tag - key/value
+  - Objects contains versions
+
+### S3 Versioning
+  - Enable per bucket level
+  - It keeps multiple archives of same data during overwrite
+  - Helps during unintended overwrite to rollback to previous version (like git)
+  - In bucket setting we can enable versioning later on too
+  - Delete files are there with Delete marker
+  - We can revert it
+  - Deleting file with delete marker is permanent delete
+
+### S3 Encryption
+  - 
