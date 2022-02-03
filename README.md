@@ -676,4 +676,27 @@
   - Deleting file with delete marker is permanent delete
 
 ### S3 Encryption
+  - 4 methods to encrypt
+  - SSE-S3
+    - Encrypts S3 objects using keys managed by AWS
+    - Server Side Encryption (SSE)
+    - AES-256
+    - Must set header: "x-amz-server-side-encryption":"AES256"
+    - HTTP or HTTPS used to upload the object with header and it will know that it must encrypt
+  - SSE-KMS
+    - using AWS KMS to manage keys
+    - Same as S3 but with custom keys with KMS 
+    - Must set header: "x-amz-server-side-encryption":"aws:kms"
+  - SSE-C
+    - using own keys outside of AWS 
+    - HTTPS must be used (for secret)
+    - encryption key is stored on 3rd party server, not on amazon
+    - Data key is located on header
+    - For decrypt we need to also provide the key
+  - Client Side Encryption
+    - Clients encrypt before data upload the object
+    - CLients decrypt if they download the data 
+    - Amazon is not involved in any encryption/decryption
+  
+  - Clients and API should use HTTPS - encryption in transit to use SSL/TLS
   - 
