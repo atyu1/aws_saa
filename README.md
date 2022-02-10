@@ -665,9 +665,10 @@
   - Uploading bigger files are multi-part upload
   - Metadata - like tag - key/value
   - Objects contains versions
+  - Files bigger then 5GB must be uploaded as multipart
 
 ### S3 Versioning
-  - Enable per bucket level
+  - Enable per bucket level or per file during upload
   - It keeps multiple archives of same data during overwrite
   - Helps during unintended overwrite to rollback to previous version (like git)
   - In bucket setting we can enable versioning later on too
@@ -699,4 +700,59 @@
     - Amazon is not involved in any encryption/decryption
   
   - Clients and API should use HTTPS - encryption in transit to use SSL/TLS
-  - 
+
+### S3 Security
+  - User Based
+    - IAM Policies are leveraged
+    - We can make it granular to specify what is allowed
+
+  - Resource Based
+    - Bucket Policies - rules applied for full bucket (cross account)
+    - Object ACL - more specific
+    - Bucket ACL - less used
+
+  - IAM user must have access and Resource ACL must allow to have successsful access to the data
+  - `S3 Bucket Policies`
+    - Json based
+    - Example (like earlier in IAM policies):
+    ```
+{
+  "Version": "2020-01-01",
+  "Statement":[
+    {
+      "Sid":"PublicRead",
+      "Effect":"Allow",
+      "Principal":"*"m
+      "Action":[
+        "s3:GetObject"
+      ],
+      "Resource":[
+        "arn:aws:s3:::mybucket/*
+      ]
+    }
+  ]
+}
+    ```
+    - This example shows how to provide read access for every object in bucket for everyone 
+    - Block public access to buckets and its objects is possible per bucket
+  - `Other Security`
+    - Networking - supports VPC endpoints
+    - Logging and Audit - S3 access logs can be stored on S3 bucket, API calls logged via AWS Cloud Trails
+    - User Security - Use MFA for delete (possible to enable just for deletes) & Pre-Signed URL (limited time to be accessible)
+
+### S3 Websites
+  - Static websites can be hosted in S3
+  - Bucket policy must be public and allow access otherwise 403 will be returned
+  - Static website hosting must be enabled per bucket
+
+### CORS
+  - Cross Origin Resource Sharing
+  - Origin = scheme (protocol), host and port, like http://test.com
+  - Browser blocks cross origin access if no special headers are provided
+  - Header: Access-Control-Allow-Origin: <URL>
+  - We need it if we have a website in one bucket and some files in another bucket
+  - Cross Origin = Cross Bucket access
+  - Limit per bucket or "*" for all
+  - Cross Origin must be enabled on second bucket, not on main
+  - Possible to debug and see in console of browser
+  - In GUI, in CORS section, add in JSON format the headers
