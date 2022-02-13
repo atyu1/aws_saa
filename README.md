@@ -933,10 +933,29 @@
   - Plenty of edge locations (check page)
   - DDOS protection, integrated with AWS Shield and AWS Web Application FW
   - Used for:
-    - S3 bucket - distribution of file, caching at the edge, upload, enhanced security with CloudFront Origin Access Identity
-    - Custom HTTP - application load balance, EC2 instance, S3 website
+    - S3 bucket - distribution of file (without making it public), caching at the edge, upload, enhanced security with CloudFront Origin Access Identity
+    - Custom HTTP - application load balance, EC2 instance, S3 website 
   
   - If EC2 is used, we must allow edge location IP in security groups, located in website
   - Same for ELB for internet frontend side
   - GEO restrictions - can limit countries to access the access - whitelist or blacklist
-    
+  - Pricing depends on locations, also more data moved over = less cost
+  - Price classes:
+    - All - all regions best perfomance - costly
+    - 200 - most regions, excludes most expensive
+    - 100 - limited, only the least expensive
+  - Possible to do Application definition per URL
+  - Different contend (like /images or /api) can be routed to different origins (ELB, EC2, S3, ...)
+  - We can add secondary origin for errored issues
+
+  - Field Level encryption - protect sensitive data throuhg application stack, adds more security
+    - Sensitive information encrypted closer to the edge
+    - Using Asymetric encryption
+    - Usage: specify set of fields in POST which should be encrypted
+
+### AWS Cloudfront Signer URL / Signed Cookies
+  - Example: we can give access to premium content for paid users
+  - Use CloudFront Signed URL/Cookie
+  - It can include URL Expiration, IP ranges to access data, trusted tiers
+  - Public things should be short lived (music) but sharring for specific user can be longer, last for years
+  - Similair to S3 signed url but it allow access no matter of origin
