@@ -666,6 +666,7 @@
   - Metadata - like tag - key/value
   - Objects contains versions
   - Files bigger then 5GB must be uploaded as multipart
+  - Explicit DENY in an IAM Policy will take precedence over an S3 bucket policy.
 
 ### S3 Versioning
   - Enable per bucket level or per file during upload
@@ -700,6 +701,8 @@
     - Amazon is not involved in any encryption/decryption
   
   - Clients and API should use HTTPS - encryption in transit to use SSL/TLS
+  - Default encryption if enabled, used for every non encryption configured objects
+  - Object encryption config overwrites default
 
 ### S3 Security
   - User Based
@@ -756,3 +759,184 @@
   - Cross Origin must be enabled on second bucket, not on main
   - Possible to debug and see in console of browser
   - In GUI, in CORS section, add in JSON format the headers
+
+### S3 MFA Delete
+  - For deleting objects, you have to use MFA
+  - bucket owner can enable/disable it
+  - only via CLI can be enabled
+  - To enable:
+    - User must have MFA
+    - S3 versioning enabled
+  - MFA will be required for suspend versioning or permanent delete
+  - Version list is not MFA required or enable versioning
+
+### S3 Access Logs
+  - Every request to S3 from any account will be logged into separate S3 bucket
+  - Data can be used for analysis or audit
+  - Monitored bucket cannot be the logging bucket! (LOOP)
+  - There is special field in properties -> Server Access Logging -> Enable (Specify the log bucket)
+  - Automatically modify the ACL for source bucket
+  - It creates folders for logs in bucket
+
+### S3 Replication
+  - Versioning must be enabled
+  - 2 Types:
+    - CRR - Cross Region Replication
+    - SRR - Same Region replication
+  - Can be under different account
+  - Copy is async
+  - IAM permissions are required to S3
+  - Usage:
+    - CRR - complaince, lower latency, replicate to multiple accounts
+    - SRR - live replication between multiple accunts for analysis
+  - After enable, only new objects are replicated
+  - Old objects must be copied manualy
+  - Replicated objects cannot be re-replicated to another bucket
+  - Deleted objects can be optionaly deleted on replicated bucket, if enabled
+  - Deleted objects for specific version are not replicated
+
+### S3 Pre-Signed URL
+  - Generate pre-signed URLs using SDK or CLI
+  - Use for non public buckets
+  - Downloads - can use CLI
+  - Uploads - harder, use SDK
+  - by default valid for 3600 sec (change by --expires-in)
+  - users using the URL will have permission of user generated the URL for GET/PUT
+  - CLI: aws s3 presign <s3://bucket/object> --region <region> --expires-in <timme>
+
+### S3 Storage Classes
+  - `S3 Standard`
+    - General Purpose
+    - High Durability of objects across Multiple AZ
+    - AZ disaster resilient
+    - Price: 0.023/GB
+  - `S3 Standard Infrequent Access (IA)`
+    - Data less frequently access but needs rapid access if neeed 
+    - Multi AZ
+    - High durability 
+    - Lower cost as Standard
+    - Usage: Backups, less frequent accessed files
+    - Price: 0.0125 / GB
+  - `S3 One Zone IA`
+    - Object stored on single AZ
+    - Same durability withing AZ
+    - Low latency
+    - Low cost (20% less then IA)
+    - Usage: secondary backups, storing redundant data
+    - Price: 0.01 / GB
+  - `S3 Inteligent Tiering`
+    - Same performance as Standard
+    - Monthly monitors the objects and auto-tier them based on access
+    - It can move files to  IA or Glacier
+    - Price: 0.0125-0.023 / GB + Cost for monitoring = 0.0025 / 1000 Objects
+  - `S3 Glacier`
+    - Archive
+    - Low cost for long archiving, data saved for 10years and so
+    - Cost per month 0.004USD/GB + retrieve price
+    - Objects = called Archive
+    - Buckets = called Vautls
+    - Retrieve options:
+      - Expedite = 1-5 minutes 
+      - Standard = 3-5 hours
+      - Bulk = 5-122 hours
+    - Faster retrieve = higher price
+    - Minimum storage duration 90days
+    - Price: 0.004 / GB
+  - `S3 Glacier Deep Archive`
+    - Extra long term storage (like tapes)
+    - Cheaper then Glacier
+    - Retrieve options:
+      - Standard = 12 hours
+      - Bulk = 48 hours
+    - Minimum 180 days
+    - Price: 0.00099 / GB
+
+### S3 Lifecycle Rules
+  - Transition Actions: Define, when the storage can be moved to another storage class
+    - Example: Move object to Standard IA after 60 days, Move to Glacier after 6 months
+  - Expiration Actions: configure, when to delete , After 1 year delete the files
+  - Rules can be applied to limit the folders in buckets, prefix 
+  - Example: Move current version to Standard IA after 40 days, delete versions after 60 days, ...
+
+### S3 Analytics
+  - Help to determine when to move objects to Standard IA
+  - Non usable with Onezone_IA or Glacier
+  - Daily refresh
+  - First start visible after 24-48h
+  - Create report which can help you to create Lifecycle Rules
+
+### S3 Performance
+  - Scaled to high request rates - 100-200 ms
+  - Application benchmarks:
+    - 3500 requests per second per prefix- PUT/COPY/POST/DELETE
+    - 5500 requests per second per prefix- GET/HEAD
+  - No limit to number of prefixes
+  - Prefix: name of the folders and subfolders (all between bucket and file): Example: bucket/folder1/folder2/file -> folder1/folder2 = prefix
+
+  - KMS Limitation - SSE-KMS if used can limit the performance, upload/download  do encrypt/decrypt
+    - KMS have quota 5500, 10000, 30000 req/s
+    - It can be increased in Service Quota Console
+  
+  - Optimization: (Upload)
+    - Multi-Part upload, makes upload to smaller chunks in parralel, recommended >100MB and must >5GB, amazon joins the parts and create file
+    - S3 Transfer Acccelaration: transfer files to edge locations, that will forward data to S3 bucket, can be used with multipart upload
+  
+  - Optimization: (Download)
+    - Paralelyze GET for byte ranges, better resilience, big files don't download directly
+
+### S3 Select / Glacier Select
+  - Retrieve less data using SQL filtering
+  - Filter by basic SQL parameters (rows, columnds)
+  - Better CPU on client side and less network traffic
+
+### S3 Event Notifications
+  - Events: Object created, deleted, move, restored
+  - Filtering by patterns (*)
+  - Usage Example: S3 generate a thumbnails of images uploaded to S3
+  - S3 can create many S3 events
+  - Events are generated in seconds, but sometimes delay may happen to minutes
+  - 2x writes at the same time to single object can generate only 1x event
+  - Choosable where to send notifications: SQS, SNS or AWS Lambda
+
+### S3 Requested Pays
+  - In general bucket owners pays for transfer costs
+  - If enabled, requestor user will pay for downloads and networking costs
+  - Helpful when to share big data
+  - Client must be logged (cannot be anonymous)
+
+### S3 Glacier Vault Lock
+  - Write Once Read Many
+  - Lock the policy for 
+  - Compliance ensure that data is not modifiable
+  - `S3 Object Lock`
+    - WORM model 
+    - Block an object version deletion for specified time
+    - Object retention, specify period or legal hold (no expiration date)
+    - Modes:
+      - Govermance mode - users cannot alter or delete objects unless special permission
+      - Compliance mode - user cannot alter ot delete object, even root cannot do, retention period cannot be changed or shortened
+
+## Athena
+  - Serverless query service
+  - Performs analytics for S3 objects
+  - Using stanadard SQL queries
+  - Support various file formats: JSON, CSV, ORC, ...
+  - Price: 5$ per TB for data scanned
+  - Use compression for less scan = lower cost
+  - Usacase: Business Inteligence, Analytics, Reporting
+  - Exam tip: serverless SQL for analytics = Athena
+
+## AWS CloudFront
+  - CDN
+  - Improves the read performance by caching at the edge
+  - Edge locations are connect to main AWS DC by fast private networks
+  - Plenty of edge locations (check page)
+  - DDOS protection, integrated with AWS Shield and AWS Web Application FW
+  - Used for:
+    - S3 bucket - distribution of file, caching at the edge, upload, enhanced security with CloudFront Origin Access Identity
+    - Custom HTTP - application load balance, EC2 instance, S3 website
+  
+  - If EC2 is used, we must allow edge location IP in security groups, located in website
+  - Same for ELB for internet frontend side
+  - GEO restrictions - can limit countries to access the access - whitelist or blacklist
+    
