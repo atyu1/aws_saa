@@ -959,3 +959,61 @@
   - It can include URL Expiration, IP ranges to access data, trusted tiers
   - Public things should be short lived (music) but sharring for specific user can be longer, last for years
   - Similair to S3 signed url but it allow access no matter of origin
+
+## AWS Global Accelerator
+  - Using anycast IP to reach the closest AWS endpoint and after get resource via internal AWS network
+  - Resource can be Elastic IP, ELB, ALB, EC2, ...
+  - Does not cache
+  - Anycast are used to reach the closest frontdoor
+  - Anycast IP is static
+  - Better to be used for gaming, non http or http but non cachable traffic
+
+## AWS Snow Family
+  - Used to:
+    - Collect and Process data at the Edge
+    - Migrate data into and out of AWS
+  - Products for Data Migration:
+    - Snowcone
+    - Snaball Edge
+    - Snowmobile
+  - Product for Edge Computing
+    - Snowcone
+    - Snoball Edge
+  - Using it if we don't wanna transfer huge data over internet
+  - Offline devices where we copy and manualy move data, which are loaded to cloud/S3
+
+### AWS Snowball Edge
+  - Physical data transport
+  - Move TB or PBs of data
+  - Pay per Data transfer
+  - Using Block storage which is S3 compatible
+  - 2 types:
+    - Snowball Edge Storage Optimized - 80TB
+    - Snowball Edge Compute Optimized - 42TB
+  - Edge computing is places which generate data but no internet connectivty, it will process and store
+ 
+  - `Compute`
+  - 52vCPUs, 208GB RAM
+  - Optional GPU (Machine learning)
+
+### AWS Snowcone 
+  - Physical data transport
+  - Smaller then Snowball Edge and Light 1,2 Kg
+  - 8TB of storage
+  - Own battery is needed
+  - Can be sent back to AWS offline or use AWS DataSync to send data
+
+  - `Compute`
+  - 2CPUs, 4GB of memory, wired or wirelless connection
+  - USB-C
+
+### AWS Snowmobile
+  - Real Truck
+  - Each have 100PB of capacity
+  - Physical security (GPS, surveilance, temperature control, 24/7 watched)
+  - More can be transfer by ordering more trucks
+
+### AWS OpsHub
+  - Alternate to CLI
+  - Software to download and manage Snow Family by GUI
+   
