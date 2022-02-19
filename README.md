@@ -1028,3 +1028,42 @@
   - 2 types of FS:
     - Scratch FS - High Burst, Temporary storage (data not replicated), Usage: short term processing
     - Persistent FS - Long term storage - replicated within AZ, Usage: long term processing
+
+## AWS Storage Gateway
+  - Used in hybrid cloud
+  - Bridge between local data and AWS in S3
+  - GW is located on premise
+  - Data from any GW are saved to S3 on AWS
+  - 3 types of GW:
+    - `File GW`
+      - S3 bucket using NFS pr SMB protocol
+      - Supports S3 (standard, IA, One Zone IA)
+      - Bucket Access using IAM for each File GW
+      - Used Data is cached in GW
+      - Can be mounted to many server on premise
+      - Support AD integration (Active Directory) for Auth
+    - `Volume GW`
+      - Using iSCSI backed by S3
+      - Supported snapshots
+      - Cached Volumes: low latency access
+      - Stored Volumes: dataset on premise and scheduled backups to AWS S3
+    - `Tape GW`
+      - Virtual Tape Library backed to S3 or Glacier
+      - Works with most common tape vendors
+      - using iSCSI too
+  - Storage GW Appliance - Box provided by AWS, if there is no free server for customer
+  - Have proper resources (CPU,Memory, ...) for any kind of GW
+
+## AWS FSx File Gateway
+  - Native Access for Windows File Server
+  - GW located on CU premise
+  - Important feature: Cache for frequently accessed files/data
+  - Useful for Group file shares or Home directories
+
+## AWS Transfer Family
+  - Using FTP,FTPs,SFTP 
+  - Managed by AWS
+  - Used as alternate copy/access to AWS Data
+  - Pay per hour and transfer per GB
+  - Store and Manage user crednetials
+  - Integrate with various Authentication servers
