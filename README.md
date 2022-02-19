@@ -981,6 +981,7 @@
     - Snoball Edge
   - Using it if we don't wanna transfer huge data over internet
   - Offline devices where we copy and manualy move data, which are loaded to cloud/S3
+  - Snowball can import to S3 Standard only (after lifecycle policy can move to Glacier)
 
 ### AWS Snowball Edge
   - Physical data transport
@@ -1016,4 +1017,14 @@
 ### AWS OpsHub
   - Alternate to CLI
   - Software to download and manage Snow Family by GUI
-   
+
+## AWS FSx
+  - Launch 3rd Party High Performance FS on AWS
+  - AWS Fully Managed
+  - Usage:
+    - Lustre (Large scale computing FS ) - Linux and Cluster = Luster, Machine Learning, High Performance Computing HPC, Video processing, ...
+    - Windows File Server (SMB and Windows NTFS, Used for windows) - data backed up daily to S3
+    - NetApp ONTAP
+  - 2 types of FS:
+    - Scratch FS - High Burst, Temporary storage (data not replicated), Usage: short term processing
+    - Persistent FS - Long term storage - replicated within AZ, Usage: long term processing
