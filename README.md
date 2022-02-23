@@ -1067,3 +1067,191 @@
   - Pay per hour and transfer per GB
   - Store and Manage user crednetials
   - Integrate with various Authentication servers
+
+## AWS Standard Queue System (SQS)
+  - Producer - create messages / sends to Queue
+  - Queue - stores the messages
+  - Consumer - process the messages / poll from Queue
+  - Fully managed Service
+  - `Decouple Applications`
+  - Unlimited number of messages
+  - 4days TTL for message by default
+  - max 14days
+  - Low lantency (<10ms)
+  - Max size is 256KB per message
+  - Supports duplicate messages and out of order
+
+  - `Producer`
+    - Produce messages using SDK to send to SQS 
+    - Using API: SendMessage()
+    - Message stays in SQS until consumer reads and delete it
+
+  - `Consumers`
+    - Can be EC2, custom server or AWS Lambda
+    - Poll SQS for messages 
+    - Processing it and when all went fine, delete it from Queue
+    - Delete API: DeleteMessage
+    - Multiple consumers can read messages from the same SQS
+  
+  - Great Usacase: SQS with ASG
+    - EC2 instances inside ASG polls messages
+    - Cloudwatch can see the Queue Length (number of messages)
+    - Alarm if queueue length reach the limit
+    - CloudWatch Alarm can inform ASG to Scale Out
+  
+  - `Security`
+    - Supports HTTPs
+    - Data at rest encrypted by KMS
+    - Client side encryption/decryption
+    - IAM policies to limit access to SQS API
+    - SQS Access Policies - similair to S3 bucket policies
+  
+### AWS SQS Access Policy
+  - Allow to define more granular access
+  - Like Prinicpal can just receive message from specific Queue
+  - With SQS source policy, we can enable to send message to SQS if object is uploaded
+
+### AWS SQS Message Visibility Timeout
+  - if consumer polls the messages, it will be invisible for other consumers (after ReceiveMessage())
+  - the message will be invisible till "message visibility timeout"
+  - by default 30s
+  - after if message is not deleted it will be visible again
+  - if consumer needs more time to be processed, there is API: changeMessageVisibility to modify the  timer
+  - if timer is too short, it can create duplicate data after processing
+
+### AWS SQS Dead Letter Queues
+  - if message goes back often to the Queue, we can set maximum receive threshold
+  - After max, we can send the suspicious message to send a dead letter queue for analysis
+  - it is good for debugging
+  - DLQ should have high retention time - 14days
+
+### AWS SQS Delay Queues
+  - Consumer don't see the message immediately
+  - We can do full per queue or per message value
+  - In GUI, we can setup with `Delivery Delay` field
+
+### AWS SQS Long Polling
+  - Consumer can poll longer time the Queue, if Queue is empty
+  - It decrease the number of requests and we have lower latency
+  - 20s is max (prefferable)
+  - We an enable per Queue or per API
+  - Per message it is API: WaitTimeSeconds
+
+### AWS SQS Request-Response Implementation
+  - Decouple request messages to one Queue and response from consumers to another Queue
+  - It will make processing faster and more effective
+  - To which Queue to response, we can setup by: Reply To: "response queue name"
+
+### AWS SQS FIFO Queue
+  - Ensure ordering of messages in Queue and conumer process in order
+  - Limited throughput (300msg/s) or with beching we have 3000msg/s
+
+## AWS Simple Notification Service (SNS)
+  - The service sends messages to SNS
+  - SNS have subscribers and get notifications if message
+  - messages are broadcast to every subcribers
+  - its called pub/sub 
+  - we have 100000 subcriptions per topic
+  - topic = queue
+  - subscribes = consumers (passive, not polling)
+  - Subscribers can be:
+    - SQS
+    - HTTP/HTTPS
+    - Lambda
+    - Emails
+    - SMS message
+    - Mobile Notifications
+  - Many AWS Service can send data to sns, like cloudwatch (alarms)
+  - We can pulblish by topic:
+    - Use SDK
+    - Create topic
+    - Create subscriptions
+    - Publish to topic
+  
+  - Supports FIFO like SQS 
+  
+### AWS SNS Security
+  - Same as SQS
+  - HTTPS
+  - KMS keys for data encryptions
+  - client side encyrption decrypton
+  - IAM policies for Access contorler
+  - SNS Access Polisies 
+
+### AWS SNS with SNS
+  - SNS can be used as front queue 
+  - and multiple SQS queues can subscribe
+  - push once and receive on many
+  - its scalable in future
+  - S3 sends event only 1x so its agood use case
+
+### AWS SNS Message filtering
+  - JSON policy to filter messages sent ot SNS
+  - without filter, allow all messages
+  - its filtering which messages are sent to which subscribers
+  - so it can be instead of broadcast a multicast
+  - Filtering can be done by values in messages
+
+## AWS Kinesis
+  - Makes streaming data processing easier
+  - Hpels with collect, process and analysis
+  - Works with real time data
+  - Pay for consumption rate
+  - Data can be: Application Logs, Metrics, Website clicks, IoT telemetry, ...
+  - 2 services:
+    - Kinesis Data Stream - capture, proces and store data streams
+    - Kinesis Data Firehouse - load data streams into AWS data stores (not custom consumers, can be 3rd party, Redshift, ..)
+    - Kinesis Data Analytics - analyze streams with SQL or apache flink
+    - Kinesis Video Stream - capture, process and store video streams
+
+## AWS MQ
+  - Used as old classic MQTP protocols
+  - Good to move old apps without rewrite the code
+  - Using Apache ActiveMQ
+  - On exam, if question is about moving app to cloud and don't refractor the code to SQS then use MQ
+
+## AWS Elastic Container Service (ECS)
+  - Launch Docker containers on AWS
+  - You must provision and maintain the infra for them
+  - AWS will take care of start/stop of containers
+  - We handle EC2 instances with special AMI - this contains ECS Agent
+  - EC2 instances have ECS agent - to handle the containers
+  - We need to assign IAM Roles 
+  - EC2 Instance Profile
+    - Used by ECS agent
+    - We assing IAM roles so it can communicate with other AWS services
+    - We use for, make API calls to ECS, send logs to CloudWatch logs, Pull docker image from ECR, refference sensitive data 
+  - ECS Task Role:
+    - Attach a specific Role to a task
+    - It will limit the access of containers to specific AWS services
+  - EFS is mostly use to share file system and data between tasks
+
+### AWS ECS Services & Tasks
+  - Service is a special purpose tasks , accross multiple EC2
+  - We can attach ALB to Containers/Tasks
+  - It will support automatic port mapping
+  - EC2 must have security group to allow all port from ALB
+
+## AWS Fargate
+  - No EC2 management is required, all automatic
+  - Serverless offering
+  - AWS will just run containers for you
+  - Every task have own ENI to access the container via IP 
+
+  - Load balancing can use ALB too
+    - Enable to have unique IP via ENI
+    - ENI security group must allow traffic from ALB
+
+### AWS ESC Scaling
+  - We can setup a cloudwatch metric to watch CPU utilication
+  - If its high, create new cloudwatch alarm and this will inform autoscaling groupt to run a new task
+  - Optional: Use ECS Capacity Providers - it will monitor if EC2 have enough resource and add more EC2 if needed
+  - Another option is to use SQS before Tasks and scale besed on SQS the number of tasks
+
+### AWS ECS Rolling Updates
+  - We can control Minimum healthy and Maximum percent
+  - When update happen, it will keep minimum old versions defined running
+  - The rest will be terminated and updated
+  - When those are stable, the old one at the beginning will be updated
+  - Maximum define additional tasks to create only during upgrade
+  
