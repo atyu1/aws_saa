@@ -1254,4 +1254,70 @@
   - The rest will be terminated and updated
   - When those are stable, the old one at the beginning will be updated
   - Maximum define additional tasks to create only during upgrade
-  
+
+## AWS Serverless
+  - You don't manage infra / servers
+  - Only deploy code
+  - Function as a Service
+  - We leverage all AWS services and do most of logic in lambda
+
+### AWS Lambda
+  - No infra to manage
+  - Easy pricing - have free tier
+  - Pay per request and compute time
+  - Integrated with whole AWS service and many programming languages
+  - Monitoring through AWS CloudWatch
+  - Limits per region - Execution
+    - 128MB - 10GB Memory
+    - Max execution time: 900 second (15min = timeout)
+    - Env variables max: 4kB
+    - Disk capacity max 512MB
+    - Concurency execution: 1000
+  - Limits per region - Deployment
+    - Max size: 50MB compressed /250MB non-compressed
+    - /tmp can be used to load bigger files
+    - Size env variables to 4kB
+
+### AWS Lambda@Edge
+  - Using CloudFront - AWS Lambda can filter before app
+  - Build better/responsive apps and no need for server
+  - It can customize CDN content
+  - Pay only for usage
+  - Used to change Request or Response on CloudFront
+
+## AWS DynamoDB
+  - Fully Managed DB, Highly Avaliable and Replicated accross multiple AZ
+  - NoSQL DB
+  - Scales to massive workloads, distributed DB
+  - Milions of requests per second, trilions of row, 100s of TB of storage
+  - Low latency
+  - Made of tables
+  - Each table have primary key and optionally sort keys
+  - Other fields are called attrobutes
+  - Each table can have infinite number of items
+  - Provisioned Mode (default)
+    - Specify number of Reads/Writes per second
+    - Plan capacity before hand
+    - Pay for provisioned Read/Write Capacity Units (RCU & WCU)
+    - Possible to add auto-scalling mode for RCU/WCU
+  - On Demand Mode
+    - Read / Writes are automatically scalled
+    - No capacity planned
+    - Pay for what used but more expensive
+    - Great for unpredicated data
+
+### AWS DynamoDB DAX
+  - Fully managed, HA, cache for DynanmoDB
+  - Helps with Reads
+  - Microseconds for latency
+  - No app logic is required
+
+### AWS DyanmoDB Streams
+  - Every CUD can generate stream
+  - Stream can be processed by Kinses or other services
+
+### AWS DynamoDB Global Table
+  - Table accessible in multiple regions
+  - Same table seen and replicated bwtween regions
+  - Read/Write can be to table in any region
+  - Prerequisite: Streams
