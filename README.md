@@ -1321,3 +1321,36 @@
   - Same table seen and replicated bwtween regions
   - Read/Write can be to table in any region
   - Prerequisite: Streams
+
+## API Gateway
+  - Good integration with Lambda for serverless application
+  - Support Websocket protocol
+  - Handle API versions, environment (dev, prod), security
+  - Create API keys and handle throtling
+  - Swagger/OpenAPI import to quickly configure
+  - Generate SDK and API spec
+  - Cache API responses
+  - 3 types:
+    - Edge-Optimized - global clients, request routed through CloudFron Edge locations (improve latency)
+    - Regional - for clients within a region
+    - Private - accessible only from private VPC
+
+### API Gateway Security
+  - IAM permissions
+    - Attach IAM policy to users
+    - Add access within your org
+    - Leverage "sig v4" capability where IAM credentails are in headers
+
+  - Lambda Authorizer = Customer Authorizer
+    - Validate tokens in header
+    - Option to cache 
+    - Helps with OAuth, SAML or 3rd party Auth
+    - Lambda returns IAM policy for user
+
+  - Cognito
+    - Manage user lifecycle
+    - API GW verifies user identity via cognito
+    - No custom implementation
+    - Only used for authentication
+
+  
