@@ -519,7 +519,7 @@
   - Supports immediate failover between replicas
   - Every node does Read and Write
 
-### Global Aurroa
+### Global Aurora
   - Multi Regoins support
   - We can have multi region replicas - disaster recovery
   - Or Global database 
@@ -575,6 +575,50 @@
     1. Lazy loading - All data is cached, cache data can became stale
     2. Write through - Add or Update data when written to the DB (no stale data)
     3. Session store - store temporay session data with Timer feature
+
+## AWS Redshift
+  - PSQL based but used for online analytics processing - business analytics
+  - 10x better performance and scale up to PB 
+  - Columnar storage data (like cassandra)
+  - Massive parralel queries
+  - Pay as you go
+  - Data is loaded from other DBs: Dynamo, S3, ...
+  - Creates nodes, 1-128
+  - 1 Primary for Query and planning
+  - rest are computes to distribute the query and have better performance
+  - Backup/Restore
+  - Perform queries against S3 directly, no need to load
+  - All in 1 AZ
+  - Use snapshot to copy to another AZ/Region
+  - Snapshot can be automated or manual
+  - Ingest data:
+    - Kinesis Firehouse
+    - S3 copy command (via internet or via VPC (via enhanced VPC routing))
+    - EC2 directly push - JDBC driver
+  - Faster then Athena
+  - Cost - pey per provisioned nodes
+
+## AWS Glue
+  - Managed extract, transform and load service (ETL)
+  - Used for analytics to process the data first
+  - Glue catalog - tables which have same format after data load
+  - Glue data crawler - can load data to catalog
+
+## AWS Neptune
+  - Fully managed graph DB
+  - Used in relation search, social networks
+  - Highly available, 3 AZ
+  - 15 read replicas 
+  - Classic security: IAM,KMS,SSL
+
+## AWS ElasticSearch (OpenSearch - new name)
+  - DB created for fast searches
+  - Search not just for Primary Keys or Indexes
+  - Support parial search
+  - Complement to another DB
+  - Built-in integration: Kinesis, Firehouse, IoT, CloudWatch, ...
+  - Security: IAM,KMS,SSL + Cognito
+  - Mostly come as ELK stack
 
 ## Route 53 (Amazon DNS service)
   - HA, scalable and AWS Managed DNS service
@@ -1305,6 +1349,7 @@
     - No capacity planned
     - Pay for what used but more expensive
     - Great for unpredicated data
+  - Max size for Item in DB: 400kB
 
 ### AWS DynamoDB DAX
   - Fully managed, HA, cache for DynanmoDB
@@ -1342,6 +1387,7 @@
     - Leverage "sig v4" capability where IAM credentails are in headers
 
   - Lambda Authorizer = Customer Authorizer
+    - used for 3rd party tokens
     - Validate tokens in header
     - Option to cache 
     - Helps with OAuth, SAML or 3rd party Auth
@@ -1353,4 +1399,31 @@
     - No custom implementation
     - Only used for authentication
 
-  
+## AWS Cognito
+  - We use for authentication
+  - Cognito User Pools
+    - Sign in fuctionality for app users
+    - Used with API GW
+    - Serverless database of users
+    - Can enable federated identities (FB, Google, ...)
+    - Sends back a JWT Token
+  - Cognito Identity Pools
+    - Provie AWS credentials so access via AWS identity
+    - Integrate User Pools as integrity provider
+    - Federated Identiy Pools - Helps to get AWS resources via 3rd party auth - like access to S3 with Facebook login
+    - Allows to comminucate with AWS Services through App users
+  - Cognito Sync
+    - Synchronize data from device to Cognito
+    - Deprecated - AppSync
+    - Store configs and other info
+
+  - Authenticate from mobile via APP to S3: Use Cognite -> Generate AWS STS -> Access to S3 via STS
+
+## AWS SAM
+  - Serverless Application Model
+  - Framework for deploying and developing servrless apps
+  - All config is YAML code
+  - something like Infra as a Code
+  - run Lambda, API GW or DynamoDB locally
+  - use CodeDeploy to deploy lambda functions
+
