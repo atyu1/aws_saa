@@ -100,7 +100,59 @@
  - Commonly used with EC2 roles, lambda roles, CloudFormation
  - Roles can be attached/detached on the fly to allow temporarly enhance the permissions
 
+## Advanced IAM
+### AWS Security Token Service (STS)
+  - token to grant a temporary and limited access to AWS resources
+  - AssumeRole
+    - Within your account
+    - Cross account
+  - AssumeRoleWithSAML
+    - return credentials with users logged with SAML
+  - AssumeRoleWithWebIdentity
+    - Used with Cognito - logged via FB,Google, ...
+  - GetSessionToken
+    - for MFA, from user or root account
+  - SAML 2.0 Federation = Auhenticate within org, get local token, used to authenticate to AWS, get STS and access the AWS resource
+  
+  - UseCase:
+    - Login from App to Google
+    - Use that token to login to cognito
+    - Cognito verify the Google Token and attach STS to have access to S3
+    - User can access with new token the S3 for limited time
 
+### AWS Organizations
+  - Global Service
+  - Allow to manage multiple org
+  - The main account is the master 
+  - Other accounts are member of specific organizations
+  - Possible to use consolidated billing
+  - Pricing benefits as we consolidate and can hit lower price tiers
+  - Create per department or dev/test/prod or multiple sub customers
+  - Use tagging for billing
+  - Cloudtrails to track user activities
+  - Master Account -> Multiple OU -> Multiple Accounts or OU again and have accounts ...
+  - `Service Control Policies` - whitelist or blacklist IAM actions
+  - Use case: restrict access to services or PCI compliance
+  - Master account does not apply to Master Account
+
+  - `Migrate Account`
+    - Remove member from organization
+    - Send invite to the new one
+    - Accept invite
+
+### AWS RAM
+  - Resource Access Manager
+  - Allow to share resources with other accounts
+  - Can share within organization or outside
+  - Used mostly with VPC or Route53
+
+### IAM Conditions
+  - Those are conditions inside Policies
+  - awsSourceIp = Source IP address for API calls
+  - awsRestrictedRegion = restrict the API calls `to` specific region
+  - ec2ResourceTag/<key>:<value> = restrict based on tags for EC2
+  - awsPrincipalTag/<key>:<value> = restrict based on tags for service
+  - 
 
 ## EC2 - Elastic Cloud Computing 
  - Infrastructure as a Service
@@ -1490,4 +1542,40 @@
   - Can be accessed by other AWS accounts
   - Schema Registy - analyze and events and create schema
     - Create specific code, which can understand the schemas
-    
+
+## AWS CloudTrail
+  - Provides audit logs for your AWS account
+  - Complaince and governance
+  - Enabled by default
+  - Get history of events and API calls (API, SDK, CLI, Console)
+  - Can put logs from cloutrail to cloudwatch logs or S3
+  - 3 kind of events:
+    - Management - logged by default, account activity, service creation, ... 
+    - Data - not logged by default, S3 put/delete object, AWS Lambda execution ... (too much)
+    - Insight - analyze events and provide unusual activity, continous analyzis ongoing to decide
+  - Kept for 90 days, for longer keep send to S3
+  - If its on S3 possible to analyze with Athena
+
+## AWS Config
+  - Used in auditing and compliance for AWS resources
+  - Helps record config changes
+  - Its a regional service - but can be aggragated accross accounts
+  - Possible to send SNS when config changes
+  - Possible to send to S3 and analyze with Athena
+  - Rules add possibility to check if complainent
+  - AWS config notifications can send update if needed
+
+## AWS Single-Sign On (SSO)
+  - Free service
+  - Used to login to once and reuse the same login to multiple sservices
+  - Can be used within AWS like between Organizations
+  - Or to 3rd party services like dropbox, slack, office 365, ...
+  - Uses SAML 2.0 markup
+  - Integrated to ActiveDirectory
+  - Centralized permission management and auditing
+
+## VPC
+  - Default VPC always exists per account
+  - EC2 by default use default VPC - can be changed by using another subnet
+  - Deafult VPC is public
+  - 
