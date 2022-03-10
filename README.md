@@ -1578,4 +1578,66 @@
   - Default VPC always exists per account
   - EC2 by default use default VPC - can be changed by using another subnet
   - Deafult VPC is public
-  - 
+  - Creates subnets for Every AZ in that region
+  - Attach the subnet to Internet GW so we have public access
+  - Max 5 per region (Can be increased)
+  - Max 5 CIDR - between /16 - /28
+  - Only private IPs are allowed
+  - VPC IP cannot overlap
+
+### Subnets
+  - Attach to VPC
+  - AZ specific
+  - 5 IPs are reserved (first 4 + 1 last)
+    - Network
+    - VPC Router
+    - AWS mapped DNS
+    - For future use
+    - Broadcast
+
+### Internet Gateway 
+  - Allow VPC to connect to Internet
+  - Scales horizontaly and HA and redundant
+  - Must be created separately (not part of VPC creation)
+  - One VPC can be attached to 1 GW and vice versa 1:1
+  - After attaching we have to tune the route table to have access to internet
+
+### NAT Instances
+  - Outdated - not recommended
+  - General NAT, provide access to outside from inside
+  - NAT instance is just EC2 which runs in Public and Private subnet (Special AMI created by AWS)
+  - Must have Elastic IP attached to it
+  - Can be bottleneck if EC2 instance is higher then this box
+  - No HA
+  - Manage security groups on your own
+
+### NAT Gateways
+  - AWS Managed, better bandwith, HA and no administration
+  - Pay per hour usage and bandwith
+  - Require IGW
+  - Bandiwth: 5Gbps -> scalabe to 45Gbps
+  - No security groups to manage
+  
+### enableDnsSupport
+  - If enabled, instances from public subnet VPC have access to Route 53 DNS server
+  - DNS server is located at: 169.254.169.253
+  - Or can be used the subnet (.2) - as mentioned second is for DNS (after network 0, gw 1, dns 2)
+  - if not enabled then custom dns needs to be used
+
+### enableDnsHostnames
+  - enabled by default for default VPC and not for other VPCs
+  - if True, assing public hostname to EC2 if it have public ipv4
+  - this feature assign public DNS to EC2
+
+### Security Groups
+  - assigned to instance
+  - stateful = outgoing rules are immediately incomming rules as well
+
+### Network Access Lists (NACL)
+  - attached to subnet
+  - stateless - retrun traffic must be also explicitly enabled
+  - NACL control traffic per subnet
+  - NACL rules have priorities
+  - Default NACL - accepts in or out = open
+  - NACL should enabled ephemeral ports which are high range port for reply traffic for clients
+
