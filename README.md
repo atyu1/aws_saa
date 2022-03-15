@@ -1631,7 +1631,7 @@
 
 ### Security Groups
   - assigned to instance
-  - stateful = outgoing rules are immediately incomming rules as well
+  - stateful = reply traffic is allowed by default
 
 ### Network Access Lists (NACL)
   - attached to subnet
@@ -1641,3 +1641,221 @@
   - Default NACL - accepts in or out = open
   - NACL should enabled ephemeral ports which are high range port for reply traffic for clients
 
+### VPC Reachibilit Analyzer
+  - Diagnostic tool to analyze network connectivity issues
+  - It detects if SG groups are issue or pacekts is not sent or not received or so
+
+### VPC Peering
+  - Connect 2 VPCs = VPN between them
+  - They must have not overlapping CIDR
+  - VPC connection is point to point and not transitive = require full mesh
+  - Support cross account and cross region
+  - We can refference for SG on another VPC Peer
+  - Add entries to route tables to make it work
+
+### VPC Endpoints
+  - allow to have private connection from EC2 to AWS Services
+  - avoid using internet GW for accessing services
+  - redundant and scale horizontaly
+  - Route table must be modified - it does automatically
+  - Support only S3 and DynamoDB
+
+### VPC FlowLog
+  - Caputer traffic for VPC,Subnet,ENI
+  - Something like netflow
+  - Can send to S3 or CloudWatch logs
+  - Capture traffic from network managed service too: EBS, Elasticache, redshift, workshift, NATGW, Transit GW
+
+### Site to Site VPN
+  - Creates VPN between VPC and Local DC
+  - Needs Virtual Private GW
+    - Its AWS side located VPN concentrator
+    - Possible to customize ASN number
+  - Also needs Customer GW
+    - Device in DC side which do VPN
+    - If device have public IP then it can be used for VPN
+    - If NAT-T is before, then NAT address is used for VPN peering
+  - !! Route propagation is needed to work 
+  - Also security group can filter traffic for EC2 after
+  - VPN CloudHub - VPGW acts as hub and spoke for multiple DC connections
+  - In GUI process is:
+    1. Create Customer GW
+    2. Create VPN GW
+    3. Create Site to site VPN
+
+
+### Direct Connect = DX
+  - Dedicated private connection from remote network to VPC
+  - Must be setup with AWS Direct Connection
+  - VPG  is required
+  - Data is not encrypted but can be by using VPN
+  - Resiliency:
+    - High - For critical workloads (2 AWS connection to VPC with 1 link, so if one goes down there is backup link)
+    - Maximum - 2 AWS connections to VPC with 2 links to avoid link failures
+
+### AWS PrivateLink
+  - Connectivity between VPCs endpoints
+  - Secure and scalable
+  - 1000s of VPC
+  - Does not need Peering,VPGW, Internet GW, NAT GW, ...
+  - This allow to establsish peering between LB or ENI via private link and no need for peering
+
+### AWS Transit GW
+  - Connects multiple VPCs throuhg it
+  - Can have also connected VPN (Customer GW) or direct connect GW
+  - Works accross regions
+  - Use route table to limit connectivity
+  - Only service which supports IP Multicast
+  - Using ECMP = Equal Cost Multipath Load balancing - good for Site-to-Site VPNS with multiple connections
+
+### VPC Traffic Mirroring 
+  - Allow to do SPAN for ENIs
+  - Specify from ENI
+  - It can send the copy traffic to ENI or load balancer  (for higher traffic, horizontal scalling)
+
+### Dual Stack
+  - We can enabled DualStack for Internet GW for IPv6
+  - ipv4 cannit be disabled
+
+### Egress Only Internet GW
+  - NAT for IPv6
+  - Only usable for IPv6
+  - Require Route Table tunning
+
+## Security
+  - SSL = encryption in transit
+  - Encryption at rest
+
+### AWS KMS
+  - Manage all the encryption keys centralized
+  - Integrated to all services like EBS, S3, Redshift, SSM, ...
+  - Use GUI, CLI or SDK
+  - Region limited
+    - If we copy snapshots between regions, we need to re-encrypt them with new keys on other side
+
+  - Master Key Types:
+    - AES256 - Symtetric encryption, used for most of the time and envelope encryption
+    - RSA or ECC - Asymetric, access to private key is not possible
+
+  - Operations:
+    - Create, Rotate, Disable, Enable
+    - Audit usage by CloudTrail
+    - Pricing: AWS Managed = free, custom created or imported = 1$/m
+  
+  - Limit: max 4kb data can be encrypted per call
+  - Key Policies
+    - Same as S3 bucket policies or so
+    - Limit access to users
+    - Default policy is permisive = allow root and entire AWS to access
+    - Custom policy = can limit user for access or administration
+  
+  - Supports automatic rotation after rotation = evefy 1 year, name stays
+  - Manual rotation is supported too, it require to attach the same alias as CMK ID will change
+
+### SSM Parameter Store
+  - Secure storage for Configuration and Secrets
+  - Integrated to KMS (Optional)
+  - Serverless and easy to use
+  - Notification supported by CloudWatch Events
+  - Integration with CloudFormation
+  - Can be used with Lambda too to get conig
+  - Config can have multiple hiarchies like prod,dev,testing
+  - In GUI, its under system manager -> Parameter store
+
+### AWS Secrets Manager
+  - Used to store secrets 
+  - Can rotate secrets and force it regularly
+  - Integration AWS RDS
+  - Encrypted using KMS
+  - Mostly used with RDS integration
+
+### AWS Cloud HSM
+  - Hardware based security
+  - Generate and manage keys 
+  - Tamper resistant
+
+### AWS Shield
+  - DDos attack protection
+  - 2 kinds:
+    - Standard - free and activated for evey user, protects from SYN/UDP floods 
+    - Advanced - paid 3000/m, provides against more sophisticated attacks
+
+### AWS WAF = Web Application Firewall
+  - Application layer secuirty 
+  - Deploy on ALB, API GW, CloudFront
+  - Using web ACL
+    - rules: IP addr, HTTP headers, HTTP body
+    - Protects against SQL Injection and XSS
+    - can block based on geo location
+    - rules for incomming rate as DDOS protection
+
+### AWS Firewall Manager
+  - Manage rules for whole organiztaion
+  - Common rules for: WAF, Shield Adv, Security Groups for ENI
+
+### AWS Guard Duty
+  - Inteligent Threat Discovery 
+  - Uses machine learning and anomaly detection
+  - One click to enable
+  - 30 days free
+  - Watches: CloudTrail logs, VPC Flow Logs, DNS Logs
+  - CloudWatch Event rule - can trigger alert/email as notification
+
+### AWS Inspector
+  - Automated Security assesments only for EC2 instances
+  - Analyze OS against vulnereabilities
+  - Require agent installed inside VM
+  - Provides a report with results
+  - Can send notification to SNS
+
+### AWS Macie
+  - AWS fully managed service
+  - Security and data privacy service using machine learning
+  - Will analyze S3 data and notify you about PII 
+  - Used to find sensitive data and report
+
+## Disaster Recovery
+  - Event which can impact company business continuity
+  - RPO - recovery point objective - how often we take backup and how much data we loose during disaster = data loss
+  - RTO - recovery time objective - how long it takes to recover from disaster = downtime
+  - Strategies:
+    - Backup and restore
+      - high RPO
+    - Pilot Light
+      - Some core services is always running 
+      - Other less important can be started 
+    - Warm Standby
+      - Full system is up and running
+      - During disaster scale production to other regions
+    - Hot Site - multisite 
+      - Full production running in cloud and on premise too
+      - During disaster it can fail over
+      - Both regions are Active/Active
+
+### AWS Database Migration Service (DMS)
+  - Quickly and securelry migrate DBs to AWS
+  - Self healing
+  - Dedicate service inside EC2
+  - DB source is available during migration
+  - Supports:
+    - Homonogenous migration - Same type: PSQL -> PSQL
+    - Heterogenous migration - Diff type: PSQL -> Oracle - requires SCT
+  - SCT = Schema Conversion Tool = Define source and destination data format for migration
+    - Located mostly on prem, dedicated server
+  - Continous Replication = Active backup of data sent to AWS DB via DMS
+
+### AWS DataSync
+  - Move large amount of data from on-Prem to AWS
+  - Can sync to S3, EFS, FSx
+  - Move from NAS
+  - can be scheduled hourly, daily, weekly
+  - 2 components:
+    - DataSync Agent - running on prem
+    - DataSync Service - in AWS
+  - Can be also use to sync data between regions located on EFS
+
+### AWS Backup
+  - Scheduled backup service
+  - Define how often take it and how long keep it
+  - Backup from various AWS resources
+  - Storing backup to S3
