@@ -41,4 +41,12 @@
 - Dynamo DB have TTL - this can expire any row after a time and delete it
 - Dynamo DB Indexes - allow to search data which are attributes
 - ML - Kendra (text learning), Comprehend (Natural Language Processing), Personalize (recommendations for products), Forecast, Translate, Polly (text to audio), Transcribe, Rekognition, SageMaker (custom ML)
-- 
+- Disaster Recovery - Backup/Restore, Pilot Light, Warm Standby, Hot Site
+- DMS supports CDC - Continous delivery to constantly upload 
+- DataSync - can move data to S3, EFS, FSx Windows/Lustre
+- DataSync - can be used to EFS to EFS sync data between regions
+- Backup sync data from plenty services to S3
+- Backup Vault Lock - same as S3 locks, not possible to delete the backups
+- X-Ray helps developers analyze and debug production, distributed applications, such as those built using a microservices architecture.
+- Datasync can send data to Glacier!
+
